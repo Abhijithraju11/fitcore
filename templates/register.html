@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — FitCore</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="landing-bg"></div>
+<div class="auth-page" style="align-items:flex-start;padding-top:60px;">
+  <div class="auth-card" style="max-width:520px;">
+    <div class="auth-logo">FITCORE</div>
+    <div class="auth-subtitle">Create your member account</div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+            {{ '✓' if category == 'success' else '✗' }} {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="name" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Min 6 characters" required>
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" name="age" placeholder="25" min="10" max="100">
+        </div>
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <input type="number" name="height" placeholder="175" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <input type="number" name="weight" placeholder="70" step="0.1">
+        </div>
+        <div class="form-group">
+          <label>Fitness Level</label>
+          <select name="fitness_level">
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+            <option>Athlete</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Goal</label>
+          <select name="goal">
+            <option>Weight Loss</option>
+            <option>Muscle Gain</option>
+            <option>Endurance</option>
+            <option>Flexibility</option>
+            <option>General Fitness</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:4px;">Create Account</button>
+    </form>
+    <div class="form-link">Already have an account? <a href="{{ url_for('login', role='member') }}">Log in</a></div>
+    <div class="form-link"><a href="{{ url_for('landing') }}" style="color:var(--muted);">← Back</a></div>
+  </div>
+</div>
+</body>
+</html>

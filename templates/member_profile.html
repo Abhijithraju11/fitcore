@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>MY PROFILE</h1>
+  <p>Update your personal fitness information</p>
+  <div class="accent-line"></div>
+</div>
+
+<div class="profile-hero" style="margin-bottom:32px;">
+  <div class="avatar" style="background:linear-gradient(135deg,#e8ff3e,#4dffb4);">{{ user.name[0].upper() }}</div>
+  <div>
+    <div class="profile-name">{{ user.name.upper() }}</div>
+    <div style="color:var(--muted);font-size:13px;">{{ user.email }}</div>
+    <div style="margin-top:8px;"><span class="badge badge-green">Member since {{ user.created_at[:10] }}</span></div>
+  </div>
+</div>
+
+<div class="form-card">
+  <form method="POST">
+    <div class="form-grid">
+      <div class="form-group"><label>Full Name</label><input type="text" name="name" value="{{ user.name }}" required></div>
+      <div class="form-group"><label>Age</label><input type="number" name="age" value="{{ user.age or '' }}" placeholder="25"></div>
+      <div class="form-group"><label>Height (cm)</label><input type="number" name="height" value="{{ user.height or '' }}" placeholder="175" step="0.1"></div>
+      <div class="form-group"><label>Weight (kg)</label><input type="number" name="weight" value="{{ user.weight or '' }}" placeholder="70" step="0.1"></div>
+      <div class="form-group">
+        <label>Fitness Level</label>
+        <select name="fitness_level">
+          {% for l in ['Beginner','Intermediate','Advanced','Athlete'] %}
+          <option {% if user.fitness_level == l %}selected{% endif %}>{{ l }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Goal</label>
+        <select name="goal">
+          {% for g in ['Weight Loss','Muscle Gain','Endurance','Flexibility','General Fitness','Athletic Performance'] %}
+          <option {% if user.goal == g %}selected{% endif %}>{{ g }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </form>
+</div>
+{% endblock %}

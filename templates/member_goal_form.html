@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Edit Goal{% endblock %}
+{% block content %}
+<div class="page-header"><h1>EDIT GOAL</h1><div class="accent-line"></div></div>
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group"><label>Goal Type</label><input type="text" name="goal_type" value="{{ goal.goal_type }}" required></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Target Value</label><input type="number" name="target_value" value="{{ goal.target_value }}" step="0.1"></div>
+      <div class="form-group"><label>Current Value</label><input type="number" name="current_value" value="{{ goal.current_value }}" step="0.1"></div>
+    </div>
+    <div class="form-group"><label>Deadline</label><input type="date" name="deadline" value="{{ goal.deadline or '' }}"></div>
+    <div class="form-group">
+      <label>Status</label>
+      <select name="status">
+        {% for s in ['Active','Completed','Paused'] %}
+        <option {% if goal.status == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <button type="submit" class="btn btn-primary">Update Goal</button>
+      <a href="{{ url_for('member_goals') }}" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Edit Meal{% endblock %}
+{% block content %}
+<div class="page-header"><h1>EDIT MEAL</h1><div class="accent-line"></div></div>
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group">
+      <label>Meal Name</label>
+      <input type="text" name="meal_name" value="{{ meal.meal_name }}" required>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Calories</label><input type="number" name="calories" value="{{ meal.calories }}" step="0.1"></div>
+      <div class="form-group"><label>Protein (g)</label><input type="number" name="protein" value="{{ meal.protein }}" step="0.1"></div>
+      <div class="form-group"><label>Carbs (g)</label><input type="number" name="carbs" value="{{ meal.carbs }}" step="0.1"></div>
+      <div class="form-group"><label>Fats (g)</label><input type="number" name="fats" value="{{ meal.fats }}" step="0.1"></div>
+    </div>
+    <div class="form-group"><label>Date</label><input type="date" name="meal_date" value="{{ meal.meal_date }}" required></div>
+    <div style="display:flex;gap:12px;">
+      <button type="submit" class="btn btn-primary">Update</button>
+      <a href="{{ url_for('member_nutrition') }}" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

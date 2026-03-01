@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}{{ member.name }}{% endblock %}
+{% block content %}
+
+<div style="margin-bottom:24px;">
+  <a href="{{ url_for('owner_dashboard') }}" style="color:var(--muted);text-decoration:none;font-size:13px;">← Back to Members</a>
+</div>
+
+<div class="profile-hero">
+  <div class="avatar" style="background: linear-gradient(135deg,#e8ff3e,#4dffb4);">{{ member.name[0].upper() }}</div>
+  <div>
+    <div class="profile-name">{{ member.name.upper() }}</div>
+    <div style="color:var(--muted);font-size:13px;margin-top:3px;">{{ member.email }}</div>
+    <div class="profile-meta">
+      <div class="meta-item">Age <span>{{ member.age }}</span></div>
+      <div class="meta-item">Height <span>{{ member.height }} cm</span></div>
+      <div class="meta-item">Weight <span>{{ member.weight }} kg</span></div>
+      <div class="meta-item">Level <span>{{ member.fitness_level }}</span></div>
+      <div class="meta-item">Goal <span>{{ member.goal }}</span></div>
+    </div>
+  </div>
+  <div style="margin-left:auto;flex-shrink:0;">
+    <a href="{{ url_for('owner_delete_member', mid=member.id) }}" class="btn btn-danger"
+       onclick="return confirm('Delete {{ member.name }} and all their data?')">Delete Member</a>
+  </div>
+</div>
+
+<div class="stats-grid" style="margin-bottom:28px;">
+  <div class="stat-card">
+    <div class="stat-icon">📏</div>
+    <div class="stat-value">{{ bmi if bmi else '—' }}</div>
+    <div class="stat-label">BMI</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-value">{{ total_cal_burned }}</div>
+    <div class="stat-label">Cal Burned</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🥗</div>
+    <div class="stat-value">{{ total_cal_consumed }}</div>
+    <div class="stat-label">Cal Consumed</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🎯</div>
+    <div class="stat-value">{{ goals|length }}</div>
+    <div class="stat-label">Goals Set</div>
+  </div>
+</div>
+
+{% if workouts %}
+<div class="table-card" style="margin-bottom:24px;">
+  <div class="table-header"><h2>WORKOUTS</h2></div>
+  <table>
+    <thead><tr><th>Exercise</th><th>Duration</th><th>Calories</th><th>Date</th><th>Notes</th></tr></thead>
+    <tbody>
+      {% for w in workouts %}
+      <tr>
+        <td style="font-weight:600;">{{ w.exercise_name }}</td>
+        <td>{{ w.duration }} min</td>
+        <td><span class="badge badge-yellow">{{ w.calories_burned }} kcal</span></td>
+        <td style="color:var(--muted);">{{ w.workout_date }}</td>
+        <td style="color:var(--muted);">{{ w.notes or '—' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if nutrition %}
+<div class="table-card" style="margin-bottom:24px;">
+  <div class="table-header"><h2>NUTRITION LOG</h2></div>
+  <table>
+    <thead><tr><th>Meal</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fats</th><th>Date</th></tr></thead>
+    <tbody>
+      {% for n in nutrition %}
+      <tr>
+        <td style="font-weight:600;">{{ n.meal_name }}</td>
+        <td><span class="badge badge-yellow">{{ n.calories }} kcal</span></td>
+        <td style="color:var(--accent3);">{{ n.protein }}g</td>
+        <td style="color:var(--blue);">{{ n.carbs }}g</td>
+        <td style="color:var(--accent2);">{{ n.fats }}g</td>
+        <td style="color:var(--muted);">{{ n.meal_date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if goals %}
+<div class="table-card">
+  <div class="table-header"><h2>GOALS</h2></div>
+  <table>
+    <thead><tr><th>Goal</th><th>Target</th><th>Current</th><th>Progress</th><th>Deadline</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for g in goals %}
+      <tr>
+        <td style="font-weight:600;">{{ g.goal_type }}</td>
+        <td>{{ g.target_value }}</td>
+        <td>{{ g.current_value }}</td>
+        <td style="min-width:100px;">
+          {% set pct = [(g.current_value / g.target_value * 100) if g.target_value else 0, 100] | min | int %}
+          <div class="progress-wrap"><div class="progress-bar" style="width:{{ pct }}%"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">{{ pct }}%</div>
+        </td>
+        <td style="color:var(--muted);">{{ g.deadline or '—' }}</td>
+        <td><span class="badge {% if g.status=='Active' %}badge-green{% elif g.status=='Completed' %}badge-yellow{% else %}badge-red{% endif %}">{{ g.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}

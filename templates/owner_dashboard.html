@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Owner Dashboard{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>OWNER DASHBOARD</h1>
+  <p>Manage your gym members and track overall performance</p>
+  <div class="accent-line"></div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">👥</div>
+    <div class="stat-value">{{ total_members }}</div>
+    <div class="stat-label">Total Members</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🏋️</div>
+    <div class="stat-value">{{ total_workouts }}</div>
+    <div class="stat-label">Workouts Logged</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-value">{{ total_calories }}</div>
+    <div class="stat-label">Total Cal Burned</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🎯</div>
+    <div class="stat-value">{{ total_goals }}</div>
+    <div class="stat-label">Active Goals</div>
+  </div>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;">ALL MEMBERS</h2>
+</div>
+
+{% if members %}
+<div class="member-grid">
+  {% for m in members %}
+  <a href="{{ url_for('owner_view_member', mid=m.id) }}" class="member-card">
+    <div class="member-card-header">
+      <div class="mc-avatar">{{ m.name[0].upper() }}</div>
+      <div>
+        <div class="mc-name">{{ m.name }}</div>
+        <div class="mc-email">{{ m.email }}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+      <span class="badge badge-blue">{{ m.fitness_level }}</span>
+      <span class="badge badge-yellow">{{ m.goal }}</span>
+      {% if m.weight and m.height %}
+        {% set bmi = (m.weight / ((m.height/100)**2)) | round(1) %}
+        <span class="badge badge-green">BMI {{ bmi }}</span>
+      {% endif %}
+    </div>
+    <div style="font-size:12px;color:var(--muted);">{{ m.age }} yrs • {{ m.height }} cm • {{ m.weight }} kg</div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:60px;color:var(--muted);">
+  <div style="font-size:48px;margin-bottom:16px;">👥</div>
+  <div>No members registered yet.</div>
+</div>
+{% endif %}
+
+{% endblock %}

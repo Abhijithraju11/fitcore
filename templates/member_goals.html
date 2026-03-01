@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}My Goals{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>MY GOALS</h1>
+  <p>Set targets and track your fitness progress</p>
+  <div class="accent-line"></div>
+</div>
+
+<div class="table-card">
+  <div class="table-header">
+    <h2>GOAL TRACKER</h2>
+    <button class="btn btn-primary" onclick="openModal('addGoal')">+ Add Goal</button>
+  </div>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Goal</th><th>Target</th><th>Current</th><th>Progress</th><th>Deadline</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for g in goals %}
+      <tr>
+        <td style="color:var(--muted);">{{ g.id }}</td>
+        <td style="font-weight:600;">{{ g.goal_type }}</td>
+        <td>{{ g.target_value }}</td>
+        <td>{{ g.current_value }}</td>
+        <td style="min-width:100px;">
+          {% set pct = [(g.current_value / g.target_value * 100) if g.target_value else 0, 100] | min | int %}
+          <div class="progress-wrap"><div class="progress-bar" style="width:{{ pct }}%"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">{{ pct }}%</div>
+        </td>
+        <td style="color:var(--muted);">{{ g.deadline or '—' }}</td>
+        <td><span class="badge {% if g.status=='Active' %}badge-green{% elif g.status=='Completed' %}badge-yellow{% else %}badge-red{% endif %}">{{ g.status }}</span></td>
+        <td>
+          <div style="display:flex;gap:8px;">
+            <a href="{{ url_for('member_edit_goal', gid=g.id) }}" class="btn btn-outline btn-sm">Edit</a>
+            <a href="{{ url_for('member_delete_goal', gid=g.id) }}" class="btn btn-danger btn-sm"
+               onclick="return confirm('Delete this goal?')">Delete</a>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:40px;">No goals set yet. Add your first goal!</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" id="addGoal">
+  <div class="modal">
+    <div class="modal-title">SET NEW GOAL</div>
+    <form method="POST" action="{{ url_for('member_add_goal') }}">
+      <div class="form-group">
+        <label>Goal Type</label>
+        <select name="goal_type">
+          <option>Target Weight (kg)</option>
+          <option>Weekly Workouts</option>
+          <option>Daily Calories Burned</option>
+          <option>Monthly Running Distance (km)</option>
+          <option>Body Fat Percentage</option>
+          <option>Custom Goal</option>
+        </select>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Target Value</label><input type="number" name="target_value" placeholder="70" step="0.1" required></div>
+        <div class="form-group"><label>Current Value</label><input type="number" name="current_value" placeholder="78" step="0.1" value="0"></div>
+      </div>
+      <div class="form-group"><label>Deadline</label><input type="date" name="deadline"></div>
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status"><option>Active</option><option>Completed</option><option>Paused</option></select>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button type="submit" class="btn btn-primary">Add Goal</button>
+        <button type="button" class="btn btn-outline" onclick="closeModal('addGoal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

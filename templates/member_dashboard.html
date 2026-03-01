@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>WELCOME BACK, {{ session.user_name.split()[0].upper() }}</h1>
+  <p>Your personal fitness overview</p>
+  <div class="accent-line"></div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">📏</div>
+    <div class="stat-value">{{ bmi if bmi else '—' }}</div>
+    <div class="stat-label">
+      {% if bmi %}
+        {% if bmi < 18.5 %}Underweight{% elif bmi < 25 %}Normal BMI{% elif bmi < 30 %}Overweight{% else %}Obese{% endif %}
+      {% else %}BMI{% endif %}
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🏋️</div>
+    <div class="stat-value">{{ workout_count }}</div>
+    <div class="stat-label">Workouts Done</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-value">{{ total_cal_burned }}</div>
+    <div class="stat-label">Cal Burned</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon">🥗</div>
+    <div class="stat-value">{{ total_cal_consumed }}</div>
+    <div class="stat-label">Cal Consumed</div>
+  </div>
+</div>
+
+<!-- Goals -->
+{% if goals %}
+<div class="table-card" style="margin-bottom:24px;">
+  <div class="table-header">
+    <h2>MY GOALS</h2>
+    <a href="{{ url_for('member_goals') }}" class="btn btn-outline btn-sm">Manage Goals</a>
+  </div>
+  <table>
+    <thead><tr><th>Goal</th><th>Progress</th><th>Deadline</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for g in goals %}
+      <tr>
+        <td style="font-weight:600;">{{ g.goal_type }}</td>
+        <td style="min-width:140px;">
+          {% set pct = [(g.current_value / g.target_value * 100) if g.target_value else 0, 100] | min | int %}
+          <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">{{ g.current_value }} / {{ g.target_value }} ({{ pct }}%)</div>
+          <div class="progress-wrap"><div class="progress-bar" style="width:{{ pct }}%"></div></div>
+        </td>
+        <td style="color:var(--muted);">{{ g.deadline or '—' }}</td>
+        <td><span class="badge {% if g.status=='Active' %}badge-green{% elif g.status=='Completed' %}badge-yellow{% else %}badge-red{% endif %}">{{ g.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<!-- Recent Workouts -->
+{% if workouts %}
+<div class="table-card" style="margin-bottom:24px;">
+  <div class="table-header">
+    <h2>RECENT WORKOUTS</h2>
+    <a href="{{ url_for('member_workouts') }}" class="btn btn-outline btn-sm">View All</a>
+  </div>
+  <table>
+    <thead><tr><th>Exercise</th><th>Duration</th><th>Cal Burned</th><th>Date</th></tr></thead>
+    <tbody>
+      {% for w in workouts %}
+      <tr>
+        <td style="font-weight:600;">{{ w.exercise_name }}</td>
+        <td>{{ w.duration }} min</td>
+        <td><span class="badge badge-yellow">🔥 {{ w.calories_burned }}</span></td>
+        <td style="color:var(--muted);">{{ w.workout_date }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<!-- Recent Meals -->
+{% if nutrition %}
+<div class="table-card">
+  <div class="table-header">
+    <h2>RECENT MEALS</h2>
+    <a href="{{ url_for('member_nutrition') }}" class="btn btn-outline btn-sm">View All</a>
+  </div>
+  <table>
+    <thead><tr><th>Meal</th><th>Calories</th><th>Protein</th><th>Carbs</th><th>Fats</th></tr></thead>
+    <tbody>
+      {% for n in nutrition %}
+      <tr>
+        <td style="font-weight:600;">{{ n.meal_name }}</td>
+        <td><span class="badge badge-yellow">{{ n.calories }} kcal</span></td>
+        <td style="color:var(--accent3);">{{ n.protein }}g</td>
+        <td style="color:var(--blue);">{{ n.carbs }}g</td>
+        <td style="color:var(--accent2);">{{ n.fats }}g</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if not workouts and not nutrition and not goals %}
+<div style="text-align:center;padding:60px;color:var(--muted);">
+  <div style="font-size:48px;margin-bottom:16px;">🚀</div>
+  <div style="font-size:18px;margin-bottom:8px;color:var(--text);">Let's get started!</div>
+  <div style="margin-bottom:24px;">Log your first workout or meal to begin tracking.</div>
+  <div style="display:flex;gap:12px;justify-content:center;">
+    <a href="{{ url_for('member_workouts') }}" class="btn btn-primary">Log Workout</a>
+    <a href="{{ url_for('member_nutrition') }}" class="btn btn-outline">Log Meal</a>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

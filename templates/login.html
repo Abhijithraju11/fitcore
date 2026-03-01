@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — FitCore</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="landing-bg"></div>
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">FITCORE</div>
+    <div class="auth-subtitle">
+      {% if role == 'owner' %}
+        <span style="color:#ff6b6b;">⚡ Gym Owner Login</span>
+      {% else %}
+        <span style="color:var(--accent);">🏃 Member Login</span>
+      {% endif %}
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+            {{ '✓' if category == 'success' else '✗' }} {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="you@example.com" required autofocus>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px;">
+        Sign In
+      </button>
+    </form>
+
+    <div class="form-link" style="margin-top:16px;">
+      <a href="{{ url_for('landing') }}" style="color:var(--muted);text-decoration:none;">← Back to role selection</a>
+    </div>
+    {% if role == 'member' %}
+    <div class="form-link">
+      Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>

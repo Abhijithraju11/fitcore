@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Edit Workout{% endblock %}
+{% block content %}
+<div class="page-header"><h1>EDIT WORKOUT</h1><div class="accent-line"></div></div>
+<div class="form-card">
+  <form method="POST">
+    <div class="form-group">
+      <label>Exercise Name</label>
+      <input type="text" name="exercise_name" value="{{ workout.exercise_name }}" required>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Duration (min)</label>
+        <input type="number" name="duration" value="{{ workout.duration }}">
+      </div>
+      <div class="form-group">
+        <label>Calories Burned</label>
+        <input type="number" name="calories_burned" value="{{ workout.calories_burned }}" step="0.1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Date</label>
+      <input type="date" name="workout_date" value="{{ workout.workout_date }}" required>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <input type="text" name="notes" value="{{ workout.notes or '' }}">
+    </div>
+    <div style="display:flex;gap:12px;">
+      <button type="submit" class="btn btn-primary">Update</button>
+      <a href="{{ url_for('member_workouts') }}" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

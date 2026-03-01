@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}My Workouts{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>MY WORKOUTS</h1>
+  <p>Log and manage your workout sessions</p>
+  <div class="accent-line"></div>
+</div>
+
+<div class="table-card">
+  <div class="table-header">
+    <h2>WORKOUT LOG</h2>
+    <button class="btn btn-primary" onclick="openModal('addWorkout')">+ Log Workout</button>
+  </div>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Exercise</th><th>Duration</th><th>Cal Burned</th><th>Date</th><th>Notes</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for w in workouts %}
+      <tr>
+        <td style="color:var(--muted);">{{ w.id }}</td>
+        <td style="font-weight:600;">{{ w.exercise_name }}</td>
+        <td>{{ w.duration }} min</td>
+        <td><span class="badge badge-yellow">🔥 {{ w.calories_burned }} kcal</span></td>
+        <td style="color:var(--muted);">{{ w.workout_date }}</td>
+        <td style="color:var(--muted);">{{ w.notes or '—' }}</td>
+        <td>
+          <div style="display:flex;gap:8px;">
+            <a href="{{ url_for('member_edit_workout', wid=w.id) }}" class="btn btn-outline btn-sm">Edit</a>
+            <a href="{{ url_for('member_delete_workout', wid=w.id) }}" class="btn btn-danger btn-sm"
+               onclick="return confirm('Delete this workout?')">Delete</a>
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:40px;">No workouts yet. Log your first one!</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="modal-overlay" id="addWorkout">
+  <div class="modal">
+    <div class="modal-title">LOG WORKOUT</div>
+    <form method="POST" action="{{ url_for('member_add_workout') }}">
+      <div class="form-group">
+        <label>Exercise Name</label>
+        <input type="text" name="exercise_name" placeholder="e.g. Running, HIIT, Yoga" required>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Duration (min)</label>
+          <input type="number" name="duration" placeholder="45" min="1">
+        </div>
+        <div class="form-group">
+          <label>Calories Burned</label>
+          <input type="number" name="calories_burned" placeholder="350" step="0.1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" name="workout_date" required>
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <input type="text" name="notes" placeholder="Personal best, morning session...">
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button type="submit" class="btn btn-primary">Log Workout</button>
+        <button type="button" class="btn btn-outline" onclick="closeModal('addWorkout')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
